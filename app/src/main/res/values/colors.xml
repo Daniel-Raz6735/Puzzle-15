@@ -10,4 +10,5 @@
     <color name="btn_bck">#795548</color>
     <color name="regular_btn">#C6C6C6</color>
     <color name="btn_txt_clr">#e4fd03</color>
+    <color name="transparent">#00E4FD03</color>
 </resources>
