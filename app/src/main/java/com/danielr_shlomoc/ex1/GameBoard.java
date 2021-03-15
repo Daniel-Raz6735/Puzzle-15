@@ -10,12 +10,9 @@ public class GameBoard {
     public GameBoard(int[][] new_board){
         board = new int[SIZE][SIZE];
 
-//        for( int i=0; i < SIZE;i++){
-//            for( int j = 0; j < SIZE; j++) {
-//                    board[i][j] = new_board[i][j];
-//
-//            }
-//        }
+        for( int i=0; i < SIZE;i++){
+            System.arraycopy(new_board[i], 0, board[i], 0, SIZE);
+        }
     }
 
     public int [] play_move(int x, int y){

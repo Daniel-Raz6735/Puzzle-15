@@ -66,13 +66,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public boolean move(int x, int y) {
-        int[] b = game.play_move(x, y);
-        if (b == null)
+        int[] res = game.play_move(x, y);
+        if (res == null)
             return false;
-        int i = b[0], j = b[1];
+        int i = res[0], j = res[1];
         if (i > SIZE || j > SIZE)
             return false;
-        color_view(btns[i][j], b[3]);
+        color_view(btns[i][j], res[2]);
         remove_color(btns[x][y]);
         return true;
 
@@ -97,7 +97,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-                    Toast.makeText(this, "bla bla", Toast.LENGTH_SHORT).show();
         boolean is_board_btn = false;
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
