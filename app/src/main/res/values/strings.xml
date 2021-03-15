@@ -2,6 +2,7 @@
     <string name="app_name">Puzzle 15</string>
     <string name="title">Welcome to Game of Fifteen</string>
     <string name="music">Music</string>
+    <string name="startPlay">START PLAY</string>
     <string name="t1">1</string>
     <string name="t2">2</string>
     <string name="t3">3</string>
