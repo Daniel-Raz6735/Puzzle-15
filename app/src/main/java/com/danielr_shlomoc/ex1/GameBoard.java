@@ -16,9 +16,40 @@ public class GameBoard {
     }
 
     public int [] play_move(int x, int y){
-       int [] a = {x,y-1,20};
+        int[] res = null;
+        //move left
+        if(y>0) {
+            if (board[x][y-1] == 0) {
+                res = new int[]{x, y - 1, board[x][y]};
+            }
+        }
+        // move right
+        if(y<SIZE-1){
+            if(board[x][y+1]==0)
+                res = new int[] {x,y+1, board[x][y]};
+        }
+        // move up
+        if(x>0){
+            if(board[x-1][y]==0)
+                res = new int[] {x-1,y, board[x][y]};
+        }
+        // move down
+        if(x<SIZE-1){
+            if(board[x+1][y]==0)
+                res = new int[] {x+1,y, board[x][y]};
+                board[x][y] = board[x+1][y];
+        }
+        if(res != null){
+            board[x][y] = 0;
+            board[res[0]][res[1]] = res[2];
+        }
+        return res;
 
-        return a;
-
+    }
+    public int [][] getBoard(){
+        int [][] res = new int[SIZE][SIZE];
+        for(int i=0; i<SIZE;i++)
+            System.arraycopy(board[i], 0, res[i], 0, SIZE);
+        return res;
     }
 }

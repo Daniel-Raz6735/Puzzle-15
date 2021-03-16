@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         startPlay = findViewById(R.id.btnPlayID);
         music = findViewById(R.id.switch1);
-
         sp = getSharedPreferences("MyPref" , Context.MODE_PRIVATE);
         playing = sp.getBoolean("play",false);
 
@@ -60,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     stopPlaying();
                     playMusic();
                 }
-
                 playing = isChecked;
 
             }

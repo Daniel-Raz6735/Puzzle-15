@@ -1,25 +1,132 @@
 package com.danielr_shlomoc.ex1;
 
-import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     private final int SIZE = 4;
+    SharedPreferences sp;
     private TextView[][] btns;
+    private TextView moves_counter;
+    private TextView time_counter;
     private GameBoard game;
+    private Button restart;
+    private int moves;
+    private int time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        sp = getSharedPreferences("gamePref", Context.MODE_PRIVATE);
+        moves_counter = findViewById(R.id.move_counter);
+        time_counter = findViewById(R.id.time_counter);
+        restart = findViewById(R.id.btn_re_start);
+        restart.setOnClickListener(this);
+        initialize_btns();
+        restart_game();
+        moves = 0;
+        time = 0;
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        start_timer();
+        load_game();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        save_game();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sp.edit().clear();
+        sp.edit().apply();
+    }
+
+    public void remove_color(TextView t) {
+        t.setBackgroundResource(R.drawable.border_black_white_bcg);
+        t.setTextColor(getResources().getColor(R.color.transparent));
+        t.setText("");
+        t.setEnabled(false);
+    }
+
+    public void save_game() {
+        SharedPreferences.Editor editor = sp.edit();
+        //save board
+        int[][] board = game.getBoard();
+        editor.putBoolean("board",true);
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                editor.putInt("btn" + i + j, board[i][j]);
+                Log.i("test_changes", "btn" + i + j);
+            }
+        }
+
+        editor.apply();
+    }
+
+    public void load_game() {
+        SharedPreferences.Editor editor = sp.edit();
+        //save board
+        if(sp.getBoolean("board" ,false)){
+
+
+        int[][] board = game.getBoard();
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                int num = sp.getInt("btn" + i + j,-1);
+
+
+                editor.putInt("btn" + i + j, board[i][j]);
+                Log.i("test_changes", "btn" + i + j);
+            }
+        }
+        }
+
+        editor.apply();
+    }
+
+    public void start_timer() {
+        new Thread(new Runnable() {
+            public void run() {
+                while (true) {
+                    try {
+
+                        Thread.sleep(1000);
+                        time++;
+                        int minutes = time/60;
+                        int seconds = time%60;
+
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                time_counter.setText("Time: "+ String.format("%02d", minutes) +":"+String.format("%02d", seconds));
+                            }
+                        });
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public void initialize_btns() {
+        //connects the buttons to the btns array and sets them the listener
         btns = new TextView[SIZE][SIZE];
-        int[][] tes = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 0}};
-        game = new GameBoard(tes);
         TextView[] row = btns[0];
         row[0] = findViewById(R.id.txt_1);
         row[1] = findViewById(R.id.txt_2);
@@ -42,27 +149,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         row[3] = findViewById(R.id.txt_16);
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-               btns[i][j].setOnClickListener(this);
+                btns[i][j].setOnClickListener(this);
             }
         }
-
-        color_board(tes);
-
-//        switchBtn(3, 1, 2, 1);
-//        swapBtn(1,2,3,0);
-
-    }
-
-    public void remove_color(TextView t) {
-        t.setBackgroundResource(R.drawable.border_black_white_bcg);
-        t.setTextColor(getResources().getColor(R.color.transparent));
-        t.setText("");
     }
 
     public void color_view(TextView t, int num) {
         t.setBackgroundResource(R.drawable.btn_bcg);
         t.setTextColor(getResources().getColor(R.color.btn_txt_clr));
         t.setText(num + "");
+        t.setEnabled(true);
+    }
+
+    public void update_moves() {
+        moves ++;
+        moves_counter.setText("Moves: "+String.format("%04d", moves));
     }
 
     public boolean move(int x, int y) {
@@ -74,6 +175,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             return false;
         color_view(btns[i][j], res[2]);
         remove_color(btns[x][y]);
+        update_moves();
         return true;
 
     }
@@ -95,6 +197,20 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public void restart_game() {
+        int[][] board = shuffle_board();
+        game = new GameBoard(board);
+        color_board(board);
+        moves = 0;
+        time = 0;
+        moves_counter.setText("Moves: 0000");
+        time_counter.setText("Time: 0000");
+    }
+
+    public int[][] shuffle_board() {
+        return new int[][]{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 0}};
+    }
+
     @Override
     public void onClick(View v) {
         boolean is_board_btn = false;
@@ -106,17 +222,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
-        if (!!is_board_btn) {
-
-            switch (v.getId()) {
-                case R.id.btnPlayID:
-                    Intent gameActivity = new Intent(this, GameActivity.class);
-                    startActivity(gameActivity);
-                    break;
-
-            }
+        if (!is_board_btn) {
+            if (v.getId() == restart.getId())
+                restart_game();
         }
     }
+
+
+
+
 
 
 //    public void switchBtn(int row_S, int col_s, int row_t, int col_t) {
