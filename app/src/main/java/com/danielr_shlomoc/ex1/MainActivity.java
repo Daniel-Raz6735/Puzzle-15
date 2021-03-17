@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Switch music;
     private MenuItem about, exit;
     private boolean playing;
-    SharedPreferences sp;
+    private SharedPreferences sp;
 
 
 

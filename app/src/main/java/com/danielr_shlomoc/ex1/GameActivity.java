@@ -31,7 +31,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         restart = findViewById(R.id.btn_re_start);
         restart.setOnClickListener(this);
         initialize_btns();
-        restart_game();
+        restart_game(null);
         moves = 0;
         time = 0;
 
@@ -170,6 +170,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         int[] res = game.play_move(x, y);
         if (res == null)
             return false;
+        Log.d("debug","res[0]: "+res[0]+" res[1]: "+res[1]+" res[2]: "+res[2]);
         int i = res[0], j = res[1];
         if (i > SIZE || j > SIZE)
             return false;
@@ -197,9 +198,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void restart_game() {
-        int[][] board = shuffle_board();
-        game = new GameBoard(board);
+    public void restart_game(int [][] board) {
+
+        if(board == null){
+
+            game = new GameBoard();
+            board = game.getBoard();
+        }
         color_board(board);
         moves = 0;
         time = 0;
@@ -207,9 +212,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         time_counter.setText("Time: 0000");
     }
 
-    public int[][] shuffle_board() {
-        return new int[][]{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 0}};
-    }
 
     @Override
     public void onClick(View v) {
@@ -224,7 +226,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (!is_board_btn) {
             if (v.getId() == restart.getId())
-                restart_game();
+                restart_game(null);
         }
     }
 
