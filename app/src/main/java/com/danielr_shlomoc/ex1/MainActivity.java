@@ -39,10 +39,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playing = sp.getBoolean("play",false);
 
         // get last state of media Player and play if last time was on.
-        if(playing){
+        if(playing)
             music.setChecked(true);
-            playMusic();
-        }
 
 
         startPlay.setOnClickListener(this);
@@ -52,14 +50,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if(!isChecked)
-                    stopPlaying();
-
-                else{
-                    stopPlaying();
-                    playMusic();
-                }
                 playing = isChecked;
+                saveChoice();
 
             }
         });
@@ -71,6 +63,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         // save state of playing music to SP
+        saveChoice();
+    }
+
+    private void saveChoice(){
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean("play", playing);
         editor.commit();
@@ -118,18 +114,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void playMusic(){
-        player =  MediaPlayer.create(this, R.raw.shlemim);
-        player.start();
-    }
-
-    private void stopPlaying() {
-        if (player != null) {
-            player.stop();
-            player.release();
-            player = null;
-        }
-    }
 
     // This function string that represent the type of the dialog - About or Exit and show the relevant dialog.
     private void dialog(String type)
@@ -161,10 +145,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.setPositiveButton(positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(positive.equals("YES")){
-                    stopPlaying();
+                if(positive.equals("YES"))
                     finish();
-                }
 
                 else
                     return;

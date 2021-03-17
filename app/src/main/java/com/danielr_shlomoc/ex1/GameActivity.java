@@ -2,6 +2,7 @@ package com.danielr_shlomoc.ex1;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,14 +13,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     private final int SIZE = 4;
-    SharedPreferences sp;
+    private SharedPreferences sp;
     private TextView[][] btns;
     private TextView moves_counter;
     private TextView time_counter;
     private GameBoard game;
     private Button restart;
+    private MediaPlayer player;
     private int moves;
     private int time;
+    private boolean playing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         restart_game(null);
         moves = 0;
         time = 0;
+
+
+        sp = getSharedPreferences("MyPref" , Context.MODE_PRIVATE);
+        playing = sp.getBoolean("play",false);
+
+        // get last state of media Player and play if last time was on.
+        if(playing){
+            player =  MediaPlayer.create(this, R.raw.janji);
+            player.setLooping(true);
+            player.start();
+
+        }
 
     }
 
@@ -52,6 +67,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
+        stopPlaying();
         super.onDestroy();
         sp.edit().clear();
         sp.edit().apply();
@@ -227,6 +243,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if (!is_board_btn) {
             if (v.getId() == restart.getId())
                 restart_game(null);
+        }
+    }
+
+    private void stopPlaying() {
+        if (player != null) {
+            player.stop();
+            player.release();
+            player = null;
         }
     }
 
