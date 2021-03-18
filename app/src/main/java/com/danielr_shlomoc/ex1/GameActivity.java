@@ -21,6 +21,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private GameBoard game;
     private Button restart;
     private MediaPlayer player;
+    private int play_location;
     private int moves;
     private int time;
     private boolean playing;
@@ -30,27 +31,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        sp = getSharedPreferences("gamePref", Context.MODE_PRIVATE);
         moves_counter = findViewById(R.id.move_counter);
         time_counter = findViewById(R.id.time_counter);
         restart = findViewById(R.id.btn_re_start);
         restart.setOnClickListener(this);
+        sp = getSharedPreferences("MyPref" , Context.MODE_PRIVATE);
+        playing = sp.getBoolean("play",false);
+        play_location = 0;
         initialize_btns();
         restart_game(null);
         moves = 0;
         time = 0;
 
 
-        sp = getSharedPreferences("MyPref" , Context.MODE_PRIVATE);
-        playing = sp.getBoolean("play",false);
 
-        // get last state of media Player and play if last time was on.
-        if(playing){
-            player =  MediaPlayer.create(this, R.raw.janji);
-            player.setLooping(true);
-            player.start();
 
-        }
+
 
     }
 
@@ -59,18 +55,26 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
         load_game();
         start_timer();
+        // get last state of media Player and play if last time was on.
+        if(playing){
+            player =  MediaPlayer.create(this, R.raw.janji);
+            player.setLooping(true);
+            player.seekTo(play_location);
+            player.start();
+
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         alive=false;
+        stopPlaying();
         save_game();
     }
 
     @Override
     protected void onDestroy() {
-        stopPlaying();
         super.onDestroy();
         sp.edit().clear();
         sp.edit().apply();
@@ -255,6 +259,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
         private void stopPlaying() {
             if (player != null) {
+                play_location = player.getCurrentPosition();
                 player.stop();
                 player.release();
                 player = null;
