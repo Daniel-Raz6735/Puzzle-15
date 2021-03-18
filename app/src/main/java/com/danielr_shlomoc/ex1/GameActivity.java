@@ -70,8 +70,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        sp.edit().clear();
-        sp.edit().apply();
+        SharedPreferences.Editor e =sp.edit();
+        e.clear();
+        e.apply();
     }
 
     @Override

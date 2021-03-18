@@ -25,7 +25,7 @@
             android:layout_weight="1"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="@color/red"
             android:layout_marginEnd="100dp"
             android:text="Moves:0000" />
 
@@ -36,7 +36,7 @@
             android:layout_weight="1"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="@color/red"
             android:text="Time: 00:00" />
     </LinearLayout>
 
