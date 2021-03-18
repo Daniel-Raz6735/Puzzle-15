@@ -13,6 +13,8 @@ public class GameBoard {
     private final int SIZE = 4;
     private int[][] board;
     private final int[][] goalState = {{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,0}};
+    public int invCount =0;
+    public int x =0;
 
 
 
@@ -97,7 +99,7 @@ public class GameBoard {
             {
                 // count pairs(i, j) such that i appears
                 // before j, but i > j.
-                if (list.get(i) > list.get(j))
+                if (list.get(i) > list.get(j)&&list.get(i)>0&&list.get(j)>0)
                     inv_count++;
             }
         }
@@ -105,7 +107,7 @@ public class GameBoard {
     }
 
     // find Position of blank from bottom
-    private int[] findXPosition()
+    public int[] findXPosition()
     {
         final int N = this.SIZE;
         // start from bottom-right corner of matrix
@@ -124,11 +126,9 @@ public class GameBoard {
 
         // Count inversions in given puzzle
         int invCount = getInvCount(list);
-        System.out.println(invCount);
-
-
         int pos = findXPosition()[0];
-        System.out.println(pos);
+        this.invCount=invCount;
+        this.x=pos;
         if (pos%2 != 0)
             return !(invCount%2 != 0);
         else
