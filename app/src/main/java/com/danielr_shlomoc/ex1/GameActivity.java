@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,6 +24,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private int moves;
     private int time;
     private boolean playing;
+    private boolean alive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +57,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        start_timer();
         load_game();
+        start_timer();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        alive=false;
         save_game();
     }
 
@@ -77,7 +80,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         t.setBackgroundResource(R.drawable.border_black_white_bcg);
         t.setTextColor(getResources().getColor(R.color.transparent));
         t.setText("");
-        t.setEnabled(false);
+        t.setClickable(false);
     }
 
     public void save_game() {
@@ -117,19 +120,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void start_timer() {
+        alive=true;
         new Thread(new Runnable() {
             public void run() {
-                while (true) {
+                while(alive) {
                     try {
-
                         Thread.sleep(1000);
                         time++;
-                        int minutes = time/60;
-                        int seconds = time%60;
-
+                        int minutes = time / 60;
+                        int seconds = time % 60;
                         runOnUiThread(new Runnable() {
                             public void run() {
-                                time_counter.setText("Time: "+ String.format("%02d", minutes) +":"+String.format("%02d", seconds));
+                                time_counter.setText("Time: " + String.format("%02d", minutes) + ":" + String.format("%02d", seconds));
                             }
                         });
                     } catch (InterruptedException e) {
@@ -174,7 +176,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         t.setBackgroundResource(R.drawable.btn_bcg);
         t.setTextColor(getResources().getColor(R.color.btn_txt_clr));
         t.setText(num + "");
-        t.setEnabled(true);
+        t.setClickable(true);
     }
 
     public void update_moves() {
@@ -182,11 +184,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         moves_counter.setText("Moves: "+String.format("%04d", moves));
     }
 
-    public boolean move(int x, int y) {
+    public void test_won(){
+        if(game.checkForWin()){
+            for (int i = 0; i < SIZE; i++) {
+                for (int j = 0; j < SIZE; j++) {
+                    btns[i][j].setClickable(false);
+                }
+            }
+            Toast.makeText(this,"Game Over - Puzzle Solved!",Toast.LENGTH_LONG).show();
+            alive=false;
+        }
+    }
+    public boolean play_move(int x, int y) {
         int[] res = game.play_move(x, y);
         if (res == null)
             return false;
-        Log.d("debug","res[0]: "+res[0]+" res[1]: "+res[1]+" res[2]: "+res[2]);
         int i = res[0], j = res[1];
         if (i > SIZE || j > SIZE)
             return false;
@@ -194,7 +206,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         remove_color(btns[x][y]);
         update_moves();
         return true;
-
     }
 
     public void color_board(int[][] new_board) {
@@ -217,7 +228,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public void restart_game(int [][] board) {
 
         if(board == null){
-
             game = new GameBoard();
             board = game.getBoard();
         }
@@ -231,99 +241,23 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        boolean is_board_btn = false;
+
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (v.getId() == btns[i][j].getId()) {
-                    move(i, j);
-                    is_board_btn = true;
+                    if (play_move(i, j))
+                        test_won();
                 }
             }
         }
-        if (!is_board_btn) {
-            if (v.getId() == restart.getId())
-                restart_game(null);
-        }
+        if (v.getId() == restart.getId())
+            restart_game(null);
     }
-
-    private void stopPlaying() {
-        if (player != null) {
-            player.stop();
-            player.release();
-            player = null;
+        private void stopPlaying() {
+            if (player != null) {
+                player.stop();
+                player.release();
+                player = null;
+            }
         }
-    }
-
-
-
-
-
-
-//    public void switchBtn(int row_S, int col_s, int row_t, int col_t) {
-//
-////        new Thread(new Runnable() {
-////            public void run() {
-////                moveBtn(row_S, col_s, row_t, col_t);//3, 1, 2, 1
-////
-////            }
-////        }).start();
-////        new Thread(new Runnable() {
-////            public void run() {
-////                moveBtn(row_t, col_t+2,row_S, col_s);// 2, 0, 3, 1
-////            }
-////        }).start();
-//
-//    }
-//
-//    public void moveBtn(int r1, int c1, int r2, int c2) {
-//        ViewGroup src = getLayout(r1);
-//        ViewGroup trg = getLayout(r2);
-//        View srcTxt = src.getChildAt(c1);
-////        runOnUiThread(new Runnable() {
-////            public void run() {
-////                src.removeViewAt(c1);
-////                trg.addView(srcTxt, c2);
-////            }
-////        });
-//
-//    }
-//
-//////        ViewGroup root = findViewById(R.id.son_layout4);
-////        ViewGroup root = getLayout(3);
-////        ViewGroup rootq = getLayout(2);
-////
-//////        ViewGroup rootq = findViewById(R.id.son_layout3);
-////        View a = root.getChildAt(2);//15
-//////        View b = root.getChildAt(3);//-
-//////         view a = rootq.getChildAt(c2);
-////        root.removeViewAt(2);//15
-////        root.addView(a,0);//
-//////        View b = root.getChildAt(3);//-
-//////        root.removeViewAt(2);
-//////        root.addView(b,1);
-//
-//
-//
-//    public ViewGroup getLayout(int row) {
-//        ViewGroup v;
-//        switch (row) {
-//            case (0):
-//                v = findViewById(R.id.son_layout1);
-//                break;
-//            case (1):
-//                v = findViewById(R.id.son_layout2);
-//                break;
-//            case (2):
-//                v = findViewById(R.id.son_layout3);
-//                break;
-//            case (3):
-//                v = findViewById(R.id.son_layout4);
-//                break;
-//            default:
-//                v = null;
-//        }
-//        return v;
-//
-//
-//    }
 }
