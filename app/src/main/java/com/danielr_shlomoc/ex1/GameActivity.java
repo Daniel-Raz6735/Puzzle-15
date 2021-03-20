@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -65,6 +66,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onPause();
         alive = false;
         stopPlaying();
+
+        Log.i("print","on pause");
     }
 
     @Override
