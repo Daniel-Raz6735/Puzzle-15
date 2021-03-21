@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     private final int SIZE = 4;
-    private SharedPreferences sp;
     private TextView[][] btns;
     private TextView moves_counter;
     private TextView time_counter;
@@ -33,7 +32,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         playing = sp.getBoolean("play", false);
         play_location = 0;
         time_thread = null;
@@ -65,14 +64,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onPause();
         alive = false;
         stopPlaying();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        SharedPreferences.Editor e =sp.edit();
-        e.clear();
-        e.apply();
     }
 
     @Override
@@ -126,7 +117,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             int seconds = time % 60;
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    time_counter.setText("Time: " + String.format("%02d", minutes) + ":" + String.format("%02d", seconds));
+                                    time_counter.setText(String.format("Time: %s:%s", String.format("%02d", minutes), String.format("%02d", seconds)));
                                 }
                             });
                         } catch (InterruptedException e) {
@@ -179,14 +170,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         //color the background of a button to be a colored button with the number appearing in it
         t.setBackgroundResource(R.drawable.btn_bcg);
         t.setTextColor(getResources().getColor(R.color.btn_txt_clr));
-        t.setText(num + "");
+        t.setText(String.format("%d", num));
         t.setClickable(true);
     }
 
     public void update_moves() {
         //add moves to the counter
         moves++;
-        moves_counter.setText("Moves: " + String.format("%04d", moves));
+        moves_counter.setText(String.format("Moves: %s", String.format("%04d", moves)));
     }
 
     public void test_won() {
@@ -246,8 +237,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         game_over = false;
         moves = 0;
         time = 0;
-        moves_counter.setText("Moves: 0000");
-        time_counter.setText("Time: 00:00");
+        moves_counter.setText(R.string.moves_0000);
+        time_counter.setText(R.string.time_00_00);
     }
 
 

@@ -19,23 +19,45 @@ public class GameBoard {
     }
 
     public void randomBoard() {
-    // This function creates a random solvable board.
-        List<Integer> list;
-        do {
-            list = new ArrayList<>();
-            for (int i = 0; i <= 15; i++)
-                list.add(i);
-            Collections.shuffle(list);
+        // This function creates a random solvable board.
+        List<Integer> list = new ArrayList<>();
+        int i = 0;
+        for (; i < SIZE * SIZE; i++)  //create and shuffle
+            list.add(i);
+        Collections.shuffle(list);
 
-            int i = 0;
-            for (int row = 0; row < this.board.length; row++)
-                for (int col = 0; col < this.board.length; col++) {
-                    this.board[row][col] = list.get(i);
-                    if (list.get(i) == 0)
-                        x_location = new int[]{row, col};
-                    i++;
+        int zero_index = list.indexOf(0);
+        x_location = new int[]{zero_index / SIZE, zero_index % SIZE};
+        i = (SIZE * SIZE) - 1;//set i to max index
+        int j = i;
+        if (!isSolvable(list)) {
+            /*if not solvable then look for the last number that is not 0 or 1 and swap it with
+            the vale */
+            if (list.get(j) < 2)
+                j--;
+            if (list.get(j) < 2)
+                j--;
+
+            for (i = j - 1; i > 0; i--) {
+                /* find the next small item and swap it with the item
+                so that the number of inversions will be one less
+                which will make the board solvable*/
+                if (list.get(j) > list.get(i) && list.get(i) != 0) {
+                    Collections.swap(list, i, j);
+                    break;
                 }
-        } while (!isSolvable(list));
+            }
+
+        }
+
+        i = 0;
+        //put the solvable list in the game board
+        for (int row = 0; row < this.board.length; row++)
+            for (int col = 0; col < this.board.length; col++, i++) {
+                this.board[row][col] = list.get(i);
+
+            }
+
 
     }
 
@@ -67,7 +89,7 @@ public class GameBoard {
 
         board[i][j] = board[row][col];
         board[row][col] = 0;
-        this.x_location = new int []{row,col}; //save the new location of the empty tile
+        this.x_location = new int[]{row, col}; //save the new location of the empty tile
         return new int[]{i, j, board[i][j]};
 
     }
@@ -78,6 +100,7 @@ public class GameBoard {
     }
 
     private int getInvCount(List<Integer> list) {
+        //get number of inversions in the board
         final int N = this.SIZE;
         int inv_count = 0;
         for (int i = 0; i < N * N - 1; i++) {

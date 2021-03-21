@@ -19,6 +19,10 @@
     <string name="t14">14</string>
     <string name="t15">15</string>
     <string name="new_game">Start New Game</string>
+    <string name="game_image">game image</string>
+    <string name="music_logo">music logo</string>
+    <string name="moves_0000">Moves:0000</string>
+    <string name="time_00_00">Time: 00:00</string>
 
 
 </resources>
