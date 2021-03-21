@@ -9,7 +9,7 @@ import java.util.List;
 public class GameBoard {
     private final int SIZE = 4; //contains the size of the game
     private final int[][] goalState = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 0}}; //expected game result
-    private int[][] board; // contains the game board
+    private final int[][] board; // contains the game board
     private int[] x_location; // an array with the location of the blank tile location
 
 
@@ -21,41 +21,28 @@ public class GameBoard {
     public void randomBoard() {
         // This function creates a random solvable board.
         List<Integer> list = new ArrayList<>();
-        int i = 0;
-        for (; i < SIZE * SIZE; i++)  //create and shuffle
+        int i,j;
+        for (i = 0; i < SIZE * SIZE; i++)  //create and shuffle
             list.add(i);
         Collections.shuffle(list);
 
         int zero_index = list.indexOf(0);
         x_location = new int[]{zero_index / SIZE, zero_index % SIZE};
-        i = (SIZE * SIZE) - 1;//set i to max index
-        int j = i;
         if (!isSolvable(list)) {
-            /*if not solvable then look for the last number that is not 0 or 1 and swap it with
-            the vale */
-            if (list.get(j) < 2)
+            j = (SIZE * SIZE) - 1;//set j to max index;
+            /*if not solvable find 2 non zero elements and swap them */
+            if (list.get(j) == 0)
                 j--;
-            if (list.get(j) < 2)
-                j--;
-
-            for (i = j - 1; i > 0; i--) {
-                /* find the next small item and swap it with the item
-                so that the number of inversions will be one less
-                which will make the board solvable*/
-                if (list.get(j) > list.get(i) && list.get(i) != 0) {
-                    Collections.swap(list, i, j);
-                    break;
-                }
-            }
-
+            i = j - 1;
+            if (list.get(i) == 0)
+                i--;
+            Collections.swap(list, i, j);
         }
 
-        i = 0;
         //put the solvable list in the game board
         for (int row = 0; row < this.board.length; row++)
-            for (int col = 0; col < this.board.length; col++, i++) {
-                this.board[row][col] = list.get(i);
-
+            for (int col = 0; col < this.board.length; col++) {
+                this.board[row][col] = list.get(row*this.SIZE+col);
             }
 
 

@@ -19,7 +19,6 @@ import android.widget.Switch;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private MediaPlayer player;
-    private Button startPlay;
     private Switch music;
     private MenuItem about, exit;
     private boolean playing;
@@ -33,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startPlay = findViewById(R.id.btnPlayID);
+        Button startPlay = findViewById(R.id.btnPlayID);
         music = findViewById(R.id.switch1);
         sp = getSharedPreferences("MyPref" , Context.MODE_PRIVATE);
         playing = sp.getBoolean("play",false);
@@ -106,12 +105,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btnPlayID:
+        if (v.getId()==R.id.btnPlayID){
                 Intent gameActivity = new Intent(this, GameActivity.class);
                 saveChoice();
                 startActivity(gameActivity);
-                break;
         }
     }
 
@@ -119,20 +116,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // This function string that represent the type of the dialog - About or Exit and show the relevant dialog.
     private void dialog(String type)
     {
-        String title, messege, positive,negative;
+        String title, message, positive,negative;
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
 
 
-        if(type == "About"){
+        if(type.equals("About")){
             title = "About App";
-            messege = "Puzzle 15 (com.danielr_shlomoc.ex1)\n\nBy Daniel Raz & Shlomo Carmi, 24/3/21.";
+            message = "Puzzle 15 (com.danielr_shlomoc.ex1)\n\nBy Daniel Raz & Shlomo Carmi, 24/3/21.";
             positive = "OK";
             negative = null;
             myDialog.setIcon(R.drawable.android_icon);
         }
         else {
             title = "Exit App";
-            messege = "Do you really want to exit Puzzle 15 ?";
+            message = "Do you really want to exit Puzzle 15 ?";
             positive = "YES";
             negative = "NO";
             myDialog.setIcon(R.drawable.exit_icon);
@@ -140,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         myDialog.setTitle(title);
-        myDialog.setMessage(messege);
+        myDialog.setMessage(message);
         myDialog.setCancelable(false);
 
         myDialog.setPositiveButton(positive, new DialogInterface.OnClickListener() {
@@ -148,9 +145,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 if(positive.equals("YES"))
                     finish();
-
-                else
-                    return;
             }
         });
 
@@ -158,7 +152,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             myDialog.setNegativeButton(negative, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    return;
                 }
             });
         }
