@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
             case R.id.btnPlayID:
                 Intent gameActivity = new Intent(this, GameActivity.class);
+                saveChoice();
                 startActivity(gameActivity);
                 break;
         }
