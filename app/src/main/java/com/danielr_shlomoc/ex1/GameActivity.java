@@ -2,9 +2,9 @@ package com.danielr_shlomoc.ex1;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -33,6 +33,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         SharedPreferences sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         playing = sp.getBoolean("play", false);
         play_location = 0;
@@ -65,8 +66,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onPause();
         alive = false;
         stopPlaying();
-
-        Log.i("print","on pause");
     }
 
     @Override

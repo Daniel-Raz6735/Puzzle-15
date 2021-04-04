@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Menu;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Button startPlay = findViewById(R.id.btnPlayID);
         music = findViewById(R.id.switch1);
         sp = getSharedPreferences("MyPref" , Context.MODE_PRIVATE);
@@ -122,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(type.equals("About")){
             title = "About App";
-            message = "Puzzle 15 (com.danielr_shlomoc.ex1)\n\nBy Daniel Raz & Shlomo Carmi, 24/3/21.";
+            message = "Puzzle 15 (com.danielr_shlomoc.ex1)\n\nBy Daniel Raz & Shlomo Carmi, 26/3/21.";
             positive = "OK";
             negative = null;
             myDialog.setIcon(R.drawable.android_icon);
